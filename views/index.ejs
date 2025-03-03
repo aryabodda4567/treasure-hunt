@@ -3,10 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Index</title>
+    <title>Treasure Hunt With C</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            padding: 20px;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 20px;
+                margin-bottom: 20px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+                width: 80%;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>Index</h1>
+<div class="container">
+    <h1>Welcome to Treasure Hunt With C</h1>
+    <button class="btn" id="redirectButton">Click to start your hunt...</button>
+</div>
+
+<script>
+    document.getElementById('redirectButton').addEventListener('click', function() {
+        // Open a new page when button is clicked
+        window.open('/game', '_self');
+
+        // Alternative options:
+        // '_self' to open in same tab
+        // '_blank' to open in new tab
+    });
+</script>
 </body>
+</html>

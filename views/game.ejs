@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f8fa;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .program-display {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            border-left: 4px solid #3498db;
+        }
+
+        .hint-container {
+            background-color: #eaf7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .hint-title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .hint-content {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Initial Form -->
+    <div id="keyForm">
+        <h1>Treasure Hunt With C</h1>
+        <div class="form-group">
+            <label for="keyInput">Enter Your Key</label>
+            <input type="number" id="keyInput" placeholder="Enter your 6-digit key" />
+            <div id="keyError" class="error-message hidden"></div>
+        </div>
+        <button id="submitKey">Get Code</button>
+    </div>
+
+    <!-- Solution Form -->
+    <div id="solutionForm" class="hidden">
+        <h1>Solve The Code</h1>
+        <div class="program-display" id="programDisplay"></div>
+        <div class="form-group">
+            <label for="solutionInput">Your Solution</label>
+            <textarea id="solutionInput" placeholder="Enter your solution here"></textarea>
+            <div id="solutionError" class="error-message hidden"></div>
+        </div>
+        <button id="submitSolution">Submit Solution</button>
+    </div>
+
+    <!-- Hint Display -->
+    <div id="hintContainer" class="hidden">
+        <h1 style="color: #4CAF50">Correct Solution!</h1>
+        <div class="hint-container">
+            <div class="hint-title">Hint Revealed:</div>
+            <div class="hint-content" id="hintContent"></div>
+        </div>
+        <button id="nextButton">Next Challenge</button>
+    </div>
+</div>
+
+<script>
+    // DOM Elements
+    const keyForm = document.getElementById('keyForm');
+    const solutionForm = document.getElementById('solutionForm');
+    const hintContainer = document.getElementById('hintContainer');
+    const keyInput = document.getElementById('keyInput');
+    const programDisplay = document.getElementById('programDisplay');
+    const solutionInput = document.getElementById('solutionInput');
+    const hintContent = document.getElementById('hintContent');
+    const keyError = document.getElementById('keyError');
+    const solutionError = document.getElementById('solutionError');
+
+    // Current key storage
+    let currentKey = '';
+
+    // Event Listeners
+    document.getElementById('submitKey').addEventListener('click', getChallenge);
+    document.getElementById('submitSolution').addEventListener('click', validateSolution);
+    document.getElementById('nextButton').addEventListener('click', openNewChallenge);
+
+    // Get challenge function
+    async function getChallenge() {
+        const key = keyInput.value.trim();
+
+        if (!key) {
+            showError(keyError, 'Please enter a key');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/question?key=${key}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(keyError, data.error || 'Failed to get challenge');
+                return;
+            }
+
+            // Store the key and display program
+            currentKey = data.key;
+            programDisplay.textContent = data.program;
+
+            // Show solution form, hide key form
+            keyForm.classList.add('hidden');
+            solutionForm.classList.remove('hidden');
+
+            // Clear any previous errors
+            hideError(keyError);
+            hideError(solutionError);
+
+        } catch (error) {
+            showError(keyError, 'Connection error. Please try again.');
+            console.error('Error:', error);
+        }
+    }
+
+    // Validate solution function
+    async function validateSolution() {
+        const solution = solutionInput.value.trim();
+
+        if (!solution) {
+            showError(solutionError, 'Please enter a solution');
+            return;
+        }
+
+        try {
+            const response = await fetch('/question/validate-solution', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    key: currentKey,
+                    solution: solution
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(solutionError, data.error || 'Failed to validate solution');
+                return;
+            }
+
+            if (data.message === 'Wrong solution') {
+                showError(solutionError, 'Incorrect solution. Try again.');
+                return;
+            }
+
+            // Display hint and show hint container
+            hintContent.textContent = data.message;
+            solutionForm.classList.add('hidden');
+            hintContainer.classList.remove('hidden');
+
+            // Clear any previous errors
+            hideError(solutionError);
+
+        } catch (error) {
+            showError(solutionError, 'Connection error. Please try again.');
+            console.error('Error:', error);
+        }
+    }
+
+    // Open new challenge function
+    function openNewChallenge() {
+        window.open(window.location.href, '_self');
+    }
+
+    // Helper functions for error handling
+    function showError(element, message) {
+        element.textContent = message;
+        element.classList.remove('hidden');
+    }
+
+    function hideError(element) {
+        element.textContent = '';
+        element.classList.add('hidden');
+    }
+</script>
+<script>
+    const redirectUrl = "/eliminate"; // Change this to your desired URL
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            window.location.href = redirectUrl;
+        }
+    });
+
+    window.addEventListener("beforeunload", function (event) {
+        navigator.sendBeacon(redirectUrl);
+    });
+</script>
+
+
+
+</body>
+</html>

@@ -1,3 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elimination Notice</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #ff416c, #ff4b2b);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #e74c3c;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .icon {
+            font-size: 70px;
+            color: #e74c3c;
+            margin-bottom: 30px;
+        }
+
+        .message {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #e74c3c;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .button:hover {
+            background-color: #c0392b;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .icon {
+                font-size: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px 15px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+
+            .icon {
+                font-size: 50px;
+                margin-bottom: 20px;
+            }
+
+            .message {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+
+            .button {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
 <body>
-<h1>You are eliminated</h1>
+<div class="container">
+    <div class="icon">⚠️</div>
+    <h1>You are eliminated</h1>
+    <p class="message">We have identified tab switch in your browser so you have been eliminated from the competition. Better luck next time!</p>
+    <button class="button">Return to Homepage</button>
+</div>
 </body>
+<script>
+    const button = document.querySelector('button');
+    button.addEventListener('click', () => {
+        window.location.href = '/';
+    });
+</script>
+</html>

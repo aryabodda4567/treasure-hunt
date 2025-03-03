@@ -6,7 +6,6 @@ const file = require("../fileUtil/fileIO"); // Updated to use Firestore-based ut
 router.post('/', async (req, res) => {
     try {
 
-
         const { program, solution, hint, count } = req.body;
 
         // Validate input fields
@@ -47,6 +46,7 @@ router.post('/', async (req, res) => {
     }
 });
 
+
 router.get("/", async (req, res) => {
     try {
         const { key } = req.query;
@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
         // Search for the JSON data
         const data = await file.getJsonDataByKey(key);
         if (!data) {
-            return res.status(404).json({ error: 'Program not found' });
+            return res.status(404).json({ error: 'Wrong key' });
         }
 
         // Check count value
@@ -82,9 +82,11 @@ router.get("/", async (req, res) => {
     }
 });
 
+
 router.post("/validate-solution", async (req, res) => {
     try {
         const { key, solution } = req.body;
+
 
         // Validate request parameters
         if (!key || validation.isEmpty(key)) {

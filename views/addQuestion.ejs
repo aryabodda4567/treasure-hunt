@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a question</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+        input, textarea, button {
+            width: 100%;
+            margin: 5px 0;
+            padding: 8px;
+        }
+        .error {
+            color: red;
+        }
+        .response {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Add question</h2>
+    <form id="programForm">
+
+
+        <label for="program">Program:</label>
+        <textarea id="program" required></textarea>
+
+        <label for="solution">Solution:</label>
+        <textarea id="solution" required></textarea>
+
+        <label for="hint">Hint:</label>
+        <textarea id="hint" required></textarea>
+
+        <label for="count">Count:</label>
+        <input type="number" id="count" required min="1">
+
+        <button type="button" id="submit-button">Submit</button>
+    </form>
+    <div id="response" class="response"></div>
+    <div id="key" class="response"></div>
+    <button id="addAnother" style="display: none;">Add Another Question</button>
+</div>
+
+<script>
+
+    document.getElementById("submit-button").addEventListener("click", async function () {
+        const program = document.getElementById('program').value.trim();
+        const solution = document.getElementById('solution').value.trim();
+        const hint = document.getElementById('hint').value.trim();
+        const count = document.getElementById('count').value.trim();
+
+        if (!program || !solution || !hint || !count || isNaN(count) || parseInt(count) < 1) {
+            document.getElementById('response').innerHTML = '<p class="error">Please provide valid inputs.</p>';
+            return;
+        }
+
+        const bodyContent = JSON.stringify({
+            program,
+            solution,
+            hint,
+            count: parseInt(count)
+        });
+
+        let headersList = {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        };
+
+        try {
+            let response = await fetch("/question", {
+                method: "POST",
+                body: bodyContent,
+                headers: headersList
+            });
+
+            let data = await response.json();
+            document.getElementById('response').innerHTML = `<p>${data.message || "Success!"}</p>`;
+            document.getElementById('key').innerHTML = `<p>Key: ${data.key}</p>`;
+            document.getElementById("addAnother").style.display = "block";
+        } catch (error) {
+            document.getElementById('response').innerHTML = '<p class="error">Error submitting data.</p>';
+            console.error("Error:", error);
+        }
+    });
+
+    document.getElementById("addAnother").addEventListener("click", function () {
+        document.getElementById("programForm").reset();
+        document.getElementById("response").innerHTML = "";
+        document.getElementById("key").innerHTML = "";
+        this.style.display = "none";
+    });
+
+
+</script>
+</body>
+</html>

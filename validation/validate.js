@@ -30,11 +30,11 @@ function validateElimination(req, res, next) {
     const clientToken = req.cookies["token"];
 
     if(!jwt.validateToken(clientToken)) {
-        return res.status(403).send({"error": "Invalid token"});
+        return res.redirect("/");
     }
     const clientStatus = req.cookies[clientToken];
 
-    console.log(clientStatus);
+
     if(parseInt(clientStatus) === 1) {
         next();
     }else{
