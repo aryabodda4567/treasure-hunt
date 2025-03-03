@@ -24,7 +24,6 @@ function writeJson(data) {
 // Function to search for a JSON object by key
 function searchJson(key) {
     if (!fs.existsSync(filePath)) return false;
-
     const fileData = fs.readFileSync(filePath, 'utf8');
     const jsonArray = JSON.parse(fileData);
 
