@@ -1,26 +1,44 @@
 const express = require('express')
 const app = express();
-const  path = require('path');
+const path = require('path');
 const bodyParser = require('body-parser');
-const addQuestion = require('./routes/questions');
+const question = require('./routes/questions');
+const cookieParser = require("cookie-parser");
+const validator = require("./validation/validate");
+
+
+
 const  port = 3000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.json());
+app.use(cookieParser());
+
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-app.get('/', function (req, res) {
-    console.log(path.join(__dirname, 'views'));
+
+
+
+app.get('/', validator.validateAndSetCookies, function (req, res) {
+
     res.render('index');
 })
 
 
+app.get("/eliminate", (req, res) => {
 
-app.use("/addQuestion", addQuestion);
+    const  clientToken = req.cookies['token'];
+    res.cookie(clientToken,0,{maxAge:(60 * 60 * 1000)*24});
+    res.render('eliminate');
+})
+
+
+app.use("/question",validator.validateElimination, question);
 
 
 app.listen(port, function () {

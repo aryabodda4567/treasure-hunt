@@ -1,13 +1,11 @@
-const  express = require('express');
+const express = require('express');
 const router = express.Router();
-const  validation = require('../validation/validate');
-const  file = require("../fileUtil/fileIO");
+const validation = require('../validation/validate');
+const file = require("../fileUtil/fileIO"); // Updated to use Firestore-based utility
 
-
-
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     try {
-        console.log("Incoming Request Body:", req.body);
+
 
         const { program, solution, hint, count } = req.body;
 
@@ -35,7 +33,7 @@ router.post('/', (req, res) => {
             count: parseInt(count)
         };
 
-        file.writeJson(data);
+        await file.writeJson(data);
 
         return res.status(200).json({ message: 'Successfully added', key });
 
@@ -49,10 +47,10 @@ router.post('/', (req, res) => {
     }
 });
 
-
-router.get("/", (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const { key } = req.query;
+        console.log(key);
 
         // Validate key
         if (!key || validation.isEmpty(key)) {
@@ -60,7 +58,7 @@ router.get("/", (req, res) => {
         }
 
         // Search for the JSON data
-        const data = file.getJsonDataByKey(key);
+        const data = await file.getJsonDataByKey(key);
         if (!data) {
             return res.status(404).json({ error: 'Program not found' });
         }
@@ -84,8 +82,7 @@ router.get("/", (req, res) => {
     }
 });
 
-
-router.post("/validate-solution", (req, res) => {
+router.post("/validate-solution", async (req, res) => {
     try {
         const { key, solution } = req.body;
 
@@ -98,7 +95,7 @@ router.post("/validate-solution", (req, res) => {
         }
 
         // Fetch data by key
-        const data = file.getJsonDataByKey(key);
+        const data = await file.getJsonDataByKey(key);
         if (!data) {
             return res.status(404).json({ error: 'Wrong key' });
         }
@@ -113,7 +110,7 @@ router.post("/validate-solution", (req, res) => {
             console.log("Solved");
 
             // Update count
-            const updateSuccess = file.updateCount(key);
+            const updateSuccess = await file.updateCount(key);
             if (!updateSuccess) {
                 return res.status(500).json({ error: 'Failed to update count' });
             }
@@ -128,7 +125,5 @@ router.post("/validate-solution", (req, res) => {
         return res.status(500).json({ error: 'Internal Server Error', details: err.message });
     }
 });
-
-
 
 module.exports = router;
